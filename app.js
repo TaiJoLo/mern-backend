@@ -30,9 +30,7 @@ app.use((error, req, res, next) => {
 });
 
 mongoose
-  .connect(
-    "mongodb+srv://jerboa:jerboa@cluster0.s3klmsv.mongodb.net/places?retryWrites=true&w=majority"
-  )
+  .connect(`${process.env.MONGODB_URI}`)
   .then(() => {
     app.listen(5000);
   })

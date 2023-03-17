@@ -5,3 +5,4 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 console.log("Now the value for API_KEY is:", process.env.API_KEY);
+console.log("Now connecting to MongoDB", process.env.MONGODB_URI);
