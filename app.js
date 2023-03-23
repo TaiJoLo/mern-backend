@@ -17,7 +17,7 @@ app.use("/api/places", placesRoutes); // => /api/places...
 app.use("/api/users", usersRoutes);
 
 app.use((req, res, next) => {
-  const error = new HttpError("Could not have this route.", 404);
+  const error = new HttpError("Could not find this route.", 404);
   throw error;
 });
 
@@ -30,7 +30,17 @@ app.use((error, req, res, next) => {
 });
 
 mongoose
-  .connect(`${process.env.MONGODB_URI}`)
+  .connect(
+    `${process.env.MONGODB_URI}`,
+
+    {
+      useNewUrlParser: true,
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      useCreateIndex: true,
+    }
+  )
+
   .then(() => {
     app.listen(5000);
   })
