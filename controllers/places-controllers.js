@@ -182,21 +182,30 @@ const deletePlace = async (req, res, next) => {
   let existingPlace;
 
   try {
-    existingPlace = await Place.findById(placeId);
+    existingPlace = await Place.findById(placeId).populate("creator");
   } catch (err) {
-    const error = new HttpError("There is no such place, try again.", 500);
+    const error = new HttpError(
+      "Sommething went wrong, please try again.",
+      500
+    );
     return next(error);
   }
+
   if (!existingPlace) {
-    const error = new HttpError("There is no such place, try again.", 500);
+    const error = new HttpError("There is no such place, try again.", 404);
     return next(error);
   }
 
   try {
-    await existingPlace.deleteOne();
+    const sess = await mongoose.startSession();
+    sess.startTransaction();
+    await existingPlace.deleteOne({ session: sess });
+    existingPlace.creator.places.pull(existingPlace);
+    await existingPlace.creator.save({ session: sess });
+    await sess.commitTransaction();
   } catch (err) {
     const error = new HttpError(
-      "Deleting the place failed, please try again.",
+      "Something went wrong, could not delete place.",
       500
     );
     return next(error);
